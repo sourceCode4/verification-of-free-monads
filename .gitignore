@@ -1,4 +1,5 @@
 *.agda~
 *.agdai
 dist-newstyle
-src\MAlonzo
+src/MAlonzo
+src/Data/TestExamples
