@@ -1,22 +1,16 @@
 module Data.Free where
 
+open import Level
 open import Haskell.Prelude hiding (pure)
 import Haskell.Prelude using (pure)
+open import Data.Container.Core
 import Haskell.Prim.Functor as Functor
 
-{- Add cases to extend for more functors -}
-data PosFunctor : Set where
-    pList : PosFunctor
-    pMaybe : PosFunctor
-
-toFunctor : PosFunctor → (Set → Set)
-toFunctor pList = List
-toFunctor pMaybe = Maybe
-
-data Free (F : PosFunctor) (A : Set) : Set where
+data Free { s p : Level } { c : Container s p} (F : ⟦ c ⟧) (A : Set) : Set where
     pure : A → Free F A
-    free : toFunctor F (Free F A) → Free F A
+    free : F (Free F A) → Free F A
 
+{-
 iFunctorPosFunctor : (F : PosFunctor) → Functor (toFunctor F)
 iFunctorPosFunctor pList = iFunctorList
 iFunctorPosFunctor pMaybe = iFunctorMaybe
@@ -41,3 +35,4 @@ instance
     iMonadFree : {F : PosFunctor} → ⦃ Functor (toFunctor F) ⦄ → Monad (Free F)
     iMonadFree ._>>=_ (pure a)  f = f a
     iMonadFree ._>>=_ (free fa) f = free (fmap (_>>= f) fa)
+-}
