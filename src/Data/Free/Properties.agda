@@ -12,15 +12,15 @@ postulate extensionality : Extensionality L.zero L.zero
 
 {- Right identity monad law proof -}
 
-monad-left-id : {F : Container _ _} {A B : Set}
+monad-left-id : {F : Container00} {A B : Set}
               → (a : A) → (f : A → Free F B) → (return a >>= f) ≡ f a 
 monad-left-id a f = refl
 
 {- Right identity monad law proof and its lemmas -}
 
-monad-right-id : {F : Container _ _} {A : Set} → (m : Free F A) → m >>= return ≡ m
+monad-right-id : {F : Container00} {A : Set} → (m : Free F A) → m >>= return ≡ m
 
-bind-into-pure-is-id : {F : Container _ _} {A : Set} 
+bind-into-pure-is-id : {F : Container00} {A : Set} 
                        ((s , vs) : ⟦ F ⟧ (Free F A)) → (_>>= return) ∘ vs ≡ vs
 bind-into-pure-is-id c@(_ , vs) = 
     begin
@@ -29,13 +29,15 @@ bind-into-pure-is-id c@(_ , vs) =
         vs
     end
 
-fmap-bind-into-return-is-id : {F : Container _ _} {A : Set} 
+fmap-bind-into-return-is-id : {F : Container00} {A : Set} 
                               (fa : ⟦ F ⟧ (Free F A)) → fmap (_>>= return) fa ≡ fa
 fmap-bind-into-return-is-id fa@(s , vs) = 
     begin
+        -- since return is defined as pure I write it direcly
         fmap (_>>= pure) fa
-    =⟨⟩
+    =⟨⟩ -- applying the definition of fmap for containers
         (s , (_>>= pure) ∘ vs)
+       -- by the above lemma applied to the second position of the pair
     =⟨ cong (s ,_) (bind-into-pure-is-id fa) ⟩
         fa
     end
@@ -51,12 +53,12 @@ monad-right-id (free fa) =
 {- Associativty monad law proof and its lemmas -}
 
 monad-assoc : {F : Container00} {A B C : Set}
-            (m : Free F A) (g : A → Free F B) (h : B → Free F C) 
+              (m : Free F A) (g : A → Free F B) (h : B → Free F C) 
             → (m >>= g) >>= h ≡ m >>= (λ x → g x >>= h)
 
 ext-lemma : {F : Container00} {A B C : Set} 
             (g : A → Free F B) (h : B → Free F C) ((_ , vs) : ⟦ F ⟧ (Free F A)) 
-            → ∀ x → (λ p → ((vs p) >>= g) >>= h) x ≡ (λ p → (vs p) >>= (λ x → (g x) >>= h)) x
+          → ∀ x → (λ p → ((vs p) >>= g) >>= h) x ≡ (λ p → (vs p) >>= (λ x → (g x) >>= h)) x
 ext-lemma g h fa@(_ , vs) p = 
     begin
         ((vs p) >>= g) >>= h

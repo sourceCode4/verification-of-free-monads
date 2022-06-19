@@ -10,7 +10,7 @@ open import Level as L
 Container00 : Set₁
 Container00 = Container L.zero L.zero
 
-data Free {s p : Level} (F : Container s p) (A : Set) : Set (s ⊔ p) where
+data Free (F : Container00) (A : Set) : Set where
     pure : A → Free F A
     free : ⟦ F ⟧ (Free F A) → Free F A
 
